@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>N Clock</title>
+<style>
+  body { background:black; color:white; font-family:sans-serif; display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; margin:0; }
+  #clock { font-size:100px; margin-bottom:20px; }
+  #controls { color:#ccc; font-size:20px; text-align:center; }
+  input[type=range] { width:300px; }
+</style>
+</head>
+<body>
+<div id="clock"></div>
+<div id="controls">
+  1日の長さ: <span id="dayLength">24</span> 時間
+  <br>
+  <input type="range" id="slider" min="12" max="48" value="24">
+</div>
+
+<script>
+const clock = document.getElementById('clock');
+const slider = document.getElementById('slider');
+const dayLengthDisplay = document.getElementById('dayLength');
+
+let customHours = 24; // デフォルト
+
+slider.addEventListener('input', () => {
+  customHours = parseInt(slider.value);
+  dayLengthDisplay.innerText = customHours;
+});
+
+// 時計の更新
+function updateClock(){
+  const now = new Date();
+  
+  // 現在の実時間を秒に換算
+  const realSeconds = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
+
+  // カスタム速度計算
+  const speed = 24 / customHours;
+  const customTotalSeconds = realSeconds * speed;
+
+  const h = Math.floor(customTotalSeconds / 3600) % customHours;
+  const m = Math.floor(customTotalSeconds / 60) % 60;
+  const s = Math.floor(customTotalSeconds) % 60;
+
+  const hourStr = String(h).padStart(2,'0');
+  const minStr  = String(m).padStart(2,'0');
+  const secStr  = String(s).padStart(2,'0');
+
+  clock.innerText = `${hourStr}:${minStr}:${secStr}`;
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+</body>
+</html>
